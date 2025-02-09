@@ -1,4 +1,4 @@
-import 'package:favorite_places/screens/form_new_place/screen_form_new_place.dart';
+import 'package:favorite_places/screens/form_place/screen_form_place.dart';
 import 'package:favorite_places/screens/home/screen_home.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -37,6 +37,18 @@ class AppFavoritePlaces extends StatelessWidget {
             fontFamily: GoogleFonts.nunito().fontFamily,
             fontWeight: FontWeight.w400,
           ),
+          bodyMedium: TextStyle(
+            fontSize: 16,
+            color: kColorSeed.onSurface,
+            fontFamily: GoogleFonts.nunito().fontFamily,
+            fontWeight: FontWeight.w400,
+          ),
+          labelMedium: TextStyle(
+            fontSize: 14,
+            color: kColorSeed.surface,
+            fontFamily: GoogleFonts.nunito().fontFamily,
+            fontWeight: FontWeight.w500,
+          ),
         ),
         scaffoldBackgroundColor: kColorSeed.surface,
         iconButtonTheme: IconButtonThemeData(
@@ -51,7 +63,7 @@ class AppFavoritePlaces extends StatelessWidget {
       initialRoute: '/home',
       routes: {
         '/home': (context) => const ScreenHome(),
-        '/formNewPlace': (context) => ScreenFormNewPlace(),
+        '/formNewPlace': (context) => ScreenFormPlace(),
       },
     );
   }

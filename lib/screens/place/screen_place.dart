@@ -10,7 +10,26 @@ class ScreenPlace extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(place.title),
+        title: Text(
+          place.title,
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+      ),
+      body: Column(
+        children: [
+          Hero(
+            tag: place.uuid,
+            child: SizedBox(
+              height: 300,
+              child: Image.file(
+                place.image,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+              ),
+            ),
+          )
+        ],
       ),
     );
   }

@@ -32,13 +32,14 @@ class ScreenHome extends ConsumerWidget {
       floatingActionButton: floatingActionButton,
       appBar: AppBar(
         title: Text(
-          "Home sweet home",
+          "Saved Places",
           style: TextTheme.of(context).titleMedium,
         ),
       ),
       body: SingleChildScrollView(
         child: Column(
           children: [
+            const SizedBox(height: 20),
             for (var place in places) TilePlace(place: place),
           ],
         ),
@@ -66,6 +67,13 @@ class TilePlace extends StatelessWidget {
         _routePlace(context);
       },
       title: Text(place.title),
+      leading: Hero(
+        tag: place.uuid,
+        child: CircleAvatar(
+          radius: 26,
+          backgroundImage: FileImage(place.image),
+        ),
+      ),
     );
   }
 }

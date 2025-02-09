@@ -49,6 +49,12 @@ class AppFavoritePlaces extends StatelessWidget {
             fontFamily: GoogleFonts.nunito().fontFamily,
             fontWeight: FontWeight.w500,
           ),
+          labelSmall: TextStyle(
+            fontSize: 12,
+            color: kColorSeed.onPrimaryContainer,
+            fontFamily: GoogleFonts.nunito().fontFamily,
+            fontWeight: FontWeight.w600,
+          ),
         ),
         scaffoldBackgroundColor: kColorSeed.surface,
         iconButtonTheme: IconButtonThemeData(

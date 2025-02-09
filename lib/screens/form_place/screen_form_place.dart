@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:favorite_places/objects/place.dart';
 import 'package:favorite_places/providers/provider_places.dart';
 import 'package:favorite_places/screens/form_place/components/input_image_field.dart';
+import 'package:favorite_places/screens/form_place/components/input_location_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:uuid/uuid.dart';
@@ -100,6 +101,8 @@ class _ScreenFormPlaceState extends ConsumerState<ScreenFormPlace> {
                   _selectedImage = image;
                 }),
               ),
+              const SizedBox(height: 15),
+              InputLocationField(),
               const SizedBox(height: 15),
               buttonSubmit,
             ],

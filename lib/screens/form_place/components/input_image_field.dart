@@ -38,9 +38,10 @@ class _InputImageFieldState extends State<InputImageField> {
             decoration: BoxDecoration(
               border: Border.all(
                 width: 1,
-                color: Theme.of(context).colorScheme.onSurface,
+                color: Theme.of(context).colorScheme.primary.withAlpha(100),
               ),
               borderRadius: BorderRadius.circular(16),
+              color: Theme.of(context).colorScheme.tertiaryContainer,
             ),
             width: double.infinity,
             height: 250,

@@ -6,6 +6,7 @@ import 'package:favorite_places/screens/form_place/components/input_image_field.
 import 'package:favorite_places/screens/form_place/components/input_location_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:location/location.dart';
 import 'package:uuid/uuid.dart';
 
 final _uuid = Uuid();
@@ -22,6 +23,7 @@ class ScreenFormPlace extends ConsumerStatefulWidget {
 class _ScreenFormPlaceState extends ConsumerState<ScreenFormPlace> {
   late final TextEditingController _controllerTitle;
   late File _selectedImage;
+  PlaceLocation? _location;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -43,9 +45,11 @@ class _ScreenFormPlaceState extends ConsumerState<ScreenFormPlace> {
     }
 
     Place temp = Place.withUUID(
-        title: _controllerTitle.text,
-        image: _selectedImage,
-        uuid: widget.heroUuid);
+      title: _controllerTitle.text,
+      image: _selectedImage,
+      uuid: widget.heroUuid,
+      location: _location!,
+    );
     ref.watch(providePlaces.notifier).addPlace(temp);
 
     Navigator.of(context).pop();
@@ -102,7 +106,11 @@ class _ScreenFormPlaceState extends ConsumerState<ScreenFormPlace> {
                   }),
                 ),
                 const SizedBox(height: 10),
-                InputLocationField(),
+                InputLocationField(
+                  onSelectLocation: (location) {
+                    _location = location;
+                  },
+                ),
                 buttonSubmit,
               ],
             ),

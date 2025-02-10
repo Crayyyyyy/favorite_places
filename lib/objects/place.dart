@@ -4,22 +4,41 @@ import 'package:uuid/uuid.dart';
 
 final Uuid _uuid = Uuid();
 
+class PlaceLocation {
+  PlaceLocation({
+    required this.address,
+    required this.lat,
+    required this.lng,
+  });
+
+  String address;
+  double lat;
+  double lng;
+}
+
 class Place {
-  Place({required this.title, this.description, required this.image})
-      : uuid = _uuid.v4(),
+  Place({
+    required this.title,
+    this.description,
+    required this.image,
+    required this.location,
+  })  : uuid = _uuid.v4(),
         timestamp = DateTime.now();
 
   Place.withUUID(
       {required this.title,
       this.description,
       required this.image,
+      required this.location,
       required this.uuid})
       : timestamp = DateTime.now();
 
   final String title;
   final String uuid;
-  final String? description;
   final File image;
   final DateTime timestamp;
+  final PlaceLocation location;
+
+  final String? description;
   // ImageMemmory image
 }

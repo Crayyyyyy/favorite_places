@@ -145,7 +145,17 @@ class TilePlace extends StatelessWidget {
         backgroundImage: FileImage(place.image),
       ),
     );
-
+    Widget subtitle = Text(
+      place.location.address,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: Theme.of(context).textTheme.labelSmall!.copyWith(
+            color: Theme.of(context)
+                .colorScheme
+                .onPrimaryContainer
+                .withValues(alpha: 0.55),
+          ),
+    );
     return Padding(
       padding: const EdgeInsets.only(bottom: 10.0),
       child: Container(
@@ -166,6 +176,7 @@ class TilePlace extends StatelessWidget {
             place.title,
             style: Theme.of(context).textTheme.titleSmall,
           ),
+          subtitle: subtitle,
           leading: leading,
           trailing: trailing,
         ),

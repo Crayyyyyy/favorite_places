@@ -1,6 +1,5 @@
-import 'package:favorite_places/objects/place.dart';
 import 'package:favorite_places/providers/provider_places.dart';
-import 'package:favorite_places/screens/place/screen_place.dart';
+import 'package:favorite_places/screens/home/components/tile_place.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -16,7 +15,7 @@ class ScreenHome extends ConsumerWidget {
     final places = ref.watch(providePlaces);
 
     Widget floatingActionButton = FloatingActionButton(
-      child: Container(
+      child: SizedBox(
         width: 32,
         height: 32,
         child: Icon(
@@ -32,6 +31,7 @@ class ScreenHome extends ConsumerWidget {
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 20.0),
         child: Column(
+          spacing: 10,
           children: [
             for (var place in places) TilePlace(place: place),
           ],
@@ -66,121 +66,19 @@ class ScreenHome extends ConsumerWidget {
       ),
     );
 
+    Widget title = Text(
+      "Saved Places",
+      style: TextTheme.of(context).titleMedium,
+    );
+
     Widget switchContent = places.isEmpty ? emptyPlaces : listPlaces;
 
     return Scaffold(
       floatingActionButton: floatingActionButton,
       appBar: AppBar(
-        title: Text(
-          "Saved Places",
-          style: TextTheme.of(context).titleMedium,
-        ),
+        title: title,
       ),
       body: switchContent,
-    );
-  }
-}
-
-class TilePlace extends StatelessWidget {
-  const TilePlace({super.key, required this.place});
-  final Place place;
-
-  void _routePlace(BuildContext ctx) {
-    Navigator.of(ctx).push(
-      MaterialPageRoute(
-        builder: (context) => ScreenPlace(place: place),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Widget trailing = SizedBox(
-      width: 90,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Expanded(
-            child: Row(
-              children: [
-                Icon(
-                  Icons.av_timer_sharp,
-                  size: 20,
-                ),
-                const SizedBox(
-                  width: 5,
-                ),
-                Text(
-                  '${place.timestamp.hour}:${place.timestamp.minute}',
-                  style: Theme.of(context).textTheme.labelSmall,
-                ),
-              ],
-            ),
-          ),
-          Expanded(
-            child: Row(
-              children: [
-                Icon(
-                  Icons.date_range_sharp,
-                  size: 20,
-                ),
-                const SizedBox(
-                  width: 5,
-                ),
-                Text(
-                  '${place.timestamp.day}.${place.timestamp.month}.${place.timestamp.year}',
-                  style: Theme.of(context).textTheme.labelSmall,
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-    Widget leading = Hero(
-      tag: place.uuid,
-      child: CircleAvatar(
-        radius: 26,
-        backgroundImage: FileImage(place.image),
-      ),
-    );
-    Widget subtitle = Text(
-      place.location.address,
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-      style: Theme.of(context).textTheme.labelSmall!.copyWith(
-            color: Theme.of(context)
-                .colorScheme
-                .onPrimaryContainer
-                .withValues(alpha: 0.55),
-          ),
-    );
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 10.0),
-      child: Container(
-        decoration: BoxDecoration(
-          border: Border.all(
-            width: 1,
-            color:
-                Theme.of(context).colorScheme.onPrimaryContainer.withAlpha(50),
-          ),
-        ),
-        child: ListTile(
-          contentPadding: EdgeInsets.all(10),
-          tileColor: Theme.of(context).colorScheme.primaryContainer,
-          onTap: () {
-            _routePlace(context);
-          },
-          title: Text(
-            place.title,
-            style: Theme.of(context).textTheme.titleSmall,
-          ),
-          subtitle: subtitle,
-          leading: leading,
-          trailing: trailing,
-        ),
-      ),
     );
   }
 }

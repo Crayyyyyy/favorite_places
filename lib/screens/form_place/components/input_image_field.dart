@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:favorite_places/components/input_container.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
@@ -33,39 +34,19 @@ class _InputImageFieldState extends State<InputImageField> {
 
   @override
   Widget build(BuildContext context) {
-    Widget switchContent = _selectedImage == null
-        ? Container(
-            decoration: BoxDecoration(
-              border: Border.all(
-                width: 1,
-                color: Theme.of(context).colorScheme.primary.withAlpha(100),
-              ),
-              color: Theme.of(context).colorScheme.tertiaryContainer,
-            ),
-            width: double.infinity,
-            height: 250,
-            child: TextButton.icon(
-              onPressed: _selectImage,
-              icon: Icon(Icons.camera),
-              label: Text("Upload picture"),
-            ),
-          )
+    Widget inputBlank = InputContainer(
+      widget: TextButton.icon(
+        onPressed: _selectImage,
+        icon: Icon(Icons.camera),
+        label: Text("Upload picture"),
+      ),
+    );
+    Widget inputFilled = _selectedImage == null
+        ? SizedBox.shrink()
         : GestureDetector(
             onTap: _selectImage,
-            child: Container(
-              clipBehavior: Clip.hardEdge,
-              decoration: BoxDecoration(
-                border: Border.all(
-                  width: 1,
-                  color: Theme.of(context)
-                      .colorScheme
-                      .inverseSurface
-                      .withValues(alpha: 0.5),
-                ),
-              ),
-              height: 250,
-              width: double.infinity,
-              child: Stack(
+            child: InputContainer(
+              widget: Stack(
                 children: [
                   Image.file(
                     _selectedImage!,
@@ -88,6 +69,7 @@ class _InputImageFieldState extends State<InputImageField> {
               ),
             ),
           );
+    Widget switchContent = _selectedImage == null ? inputBlank : inputFilled;
 
     return switchContent;
   }

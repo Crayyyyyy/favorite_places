@@ -6,15 +6,14 @@ import 'package:favorite_places/screens/form_place/components/input_image_field.
 import 'package:favorite_places/screens/form_place/components/input_location_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:location/location.dart';
 import 'package:uuid/uuid.dart';
 
 final _uuid = Uuid();
 
 class ScreenFormPlace extends ConsumerStatefulWidget {
-  ScreenFormPlace({super.key}) : heroUuid = _uuid.v4();
+  ScreenFormPlace({super.key}) : uuid = _uuid.v4();
 
-  final heroUuid;
+  final uuid;
 
   @override
   ConsumerState<ScreenFormPlace> createState() => _ScreenFormPlaceState();
@@ -22,8 +21,8 @@ class ScreenFormPlace extends ConsumerStatefulWidget {
 
 class _ScreenFormPlaceState extends ConsumerState<ScreenFormPlace> {
   late final TextEditingController _controllerTitle;
-  late File _selectedImage;
-  PlaceLocation? _location;
+  File? _selectedImage;
+  PlaceLocation? _selectedLocation;
 
   final _formKey = GlobalKey<FormState>();
 
@@ -44,11 +43,37 @@ class _ScreenFormPlaceState extends ConsumerState<ScreenFormPlace> {
       return;
     }
 
+    if (_selectedLocation == null || _selectedImage == null) {
+      final message;
+      if (_selectedLocation == null && _selectedImage != null) {
+        message = "Location needs to be provided";
+      } else if (_selectedLocation != null && _selectedImage == null) {
+        message = "Image needs to be provided";
+      } else {
+        message = "Image and location need to be provided";
+      }
+
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 10,
+            children: [
+              Icon(Icons.warning_amber_sharp),
+              Text(message),
+            ],
+          ),
+        ),
+      );
+      return;
+    }
+
     Place temp = Place.withUUID(
       title: _controllerTitle.text,
-      image: _selectedImage,
-      uuid: widget.heroUuid,
-      location: _location!,
+      image: _selectedImage!,
+      uuid: widget.uuid,
+      location: _selectedLocation!,
     );
     ref.watch(providePlaces.notifier).addPlace(temp);
 
@@ -82,40 +107,45 @@ class _ScreenFormPlaceState extends ConsumerState<ScreenFormPlace> {
           _submitForm(context);
         },
         child: Text("+ Add a place"));
+    Widget inputImage = Hero(
+      tag: widget.uuid,
+      child: InputImageField(
+        onPickImage: (image) {
+          _selectedImage = image;
+        },
+      ),
+    );
+    Widget inputLocation = InputLocationField(
+      onSelectLocation: (location) {
+        _selectedLocation = location;
+      },
+    );
+    Widget form = Form(
+      key: _formKey,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20.0),
+        child: Column(
+          spacing: 10,
+          children: [
+            inputTitle,
+            inputImage,
+            inputLocation,
+            buttonSubmit,
+          ],
+        ),
+      ),
+    );
+    Widget title = Text(
+      "Add a Place!",
+      style: Theme.of(context).textTheme.titleMedium,
+    );
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(
-          "Add a Place!",
-          style: Theme.of(context).textTheme.titleMedium,
-        ),
+        title: title,
       ),
       body: SingleChildScrollView(
-        child: Form(
-          key: _formKey,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 20.0),
-            child: Column(
-              children: [
-                const SizedBox(height: 10),
-                inputTitle,
-                Hero(
-                  tag: widget.heroUuid,
-                  child: InputImageField(onPickImage: (image) {
-                    _selectedImage = image;
-                  }),
-                ),
-                const SizedBox(height: 10),
-                InputLocationField(
-                  onSelectLocation: (location) {
-                    _location = location;
-                  },
-                ),
-                buttonSubmit,
-              ],
-            ),
-          ),
-        ),
+        child: form,
       ),
     );
   }

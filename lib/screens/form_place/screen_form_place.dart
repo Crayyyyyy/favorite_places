@@ -86,26 +86,26 @@ class _ScreenFormPlaceState extends ConsumerState<ScreenFormPlace> {
           style: Theme.of(context).textTheme.titleMedium,
         ),
       ),
-      body: Form(
-        key: _formKey,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            children: [
-              const SizedBox(height: 15),
-              inputTitle,
-              const SizedBox(height: 15),
-              Hero(
-                tag: widget.heroUuid,
-                child: InputImageField(onPickImage: (image) {
-                  _selectedImage = image;
-                }),
-              ),
-              const SizedBox(height: 15),
-              InputLocationField(),
-              const SizedBox(height: 15),
-              buttonSubmit,
-            ],
+      body: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20.0),
+            child: Column(
+              children: [
+                const SizedBox(height: 10),
+                inputTitle,
+                Hero(
+                  tag: widget.heroUuid,
+                  child: InputImageField(onPickImage: (image) {
+                    _selectedImage = image;
+                  }),
+                ),
+                const SizedBox(height: 10),
+                InputLocationField(),
+                buttonSubmit,
+              ],
+            ),
           ),
         ),
       ),

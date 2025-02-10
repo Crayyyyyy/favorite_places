@@ -28,6 +28,8 @@
 	<true/>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Location for your place!</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>Location for your place!</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Take a photo for your place!</string>
 	<key>NSMicrophoneUsageDescription</key>

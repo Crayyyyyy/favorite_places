@@ -1,15 +1,32 @@
 import 'package:favorite_places/objects/place.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class ScreenPlace extends StatelessWidget {
-  const ScreenPlace({super.key, required this.place});
+  ScreenPlace({super.key, required this.place});
   final Place place;
+  String? apiKey;
 
-  String? get locationImage {
+  Future<void> loadApiKey() async {
+    String? tempKey;
+    try {
+      await dotenv.load(fileName: ".env");
+      tempKey = dotenv.env['API_KEY'] ?? '';
+    } catch (e) {
+      debugPrint(
+          "You need to create .env variable in root of this project with API_KEY in order to use Google Maps API.");
+    }
+    apiKey = tempKey;
+    // debugPrint('API Key: $apiKey');
+  }
+
+  Future<String?> get locationImage async {
     final lat = place.location.lat;
     final lng = place.location.lng;
 
-    return 'https://maps.googleapis.com/maps/api/staticmap?center=$lat,$lng&zoom=18&size=600x600&maptype=roadmap&markers=color:red%7Clabel:A%7C$lat,$lng&key=AIzaSyDu8_Us5JNgx7xm6-G4GfY_emMCW6ousPQ';
+    await loadApiKey();
+
+    return 'https://maps.googleapis.com/maps/api/staticmap?center=$lat,$lng&zoom=18&size=600x600&maptype=roadmap&markers=color:red%7Clabel:A%7C$lat,$lng&key=$apiKey';
   }
 
   @override
@@ -54,9 +71,28 @@ class ScreenPlace extends StatelessWidget {
 
     Widget bubbleLocation = Column(
       children: [
-        CircleAvatar(
-          radius: 75,
-          backgroundImage: NetworkImage(locationImage!),
+        FutureBuilder<String?>(
+          future: locationImage,
+          builder: (ctx, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const CircleAvatar(
+                radius: 75,
+                child: CircularProgressIndicator(),
+              );
+            } else if (snapshot.hasError ||
+                !snapshot.hasData ||
+                snapshot.data!.isEmpty) {
+              return const CircleAvatar(
+                radius: 75,
+                child: Icon(Icons.error),
+              );
+            } else {
+              return CircleAvatar(
+                radius: 75,
+                backgroundImage: NetworkImage(snapshot.data!),
+              );
+            }
+          },
         ),
         const SizedBox(height: 20),
         Text(

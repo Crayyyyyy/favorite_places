@@ -3,15 +3,30 @@ import 'package:favorite_places/screens/home/components/tile_place.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ScreenHome extends ConsumerWidget {
+class ScreenHome extends ConsumerStatefulWidget {
   const ScreenHome({super.key});
+
+  @override
+  ConsumerState<ScreenHome> createState() {
+    return _ScreenHomeState();
+  }
+}
+
+class _ScreenHomeState extends ConsumerState<ScreenHome> {
+  late Future<void> _placesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _placesFuture = ref.read(providePlaces.notifier).loadPlaces();
+  }
 
   void _routeToForm(BuildContext context) {
     Navigator.of(context).pushNamed("/formNewPlace");
   }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final places = ref.watch(providePlaces);
 
     Widget floatingActionButton = FloatingActionButton(
@@ -66,12 +81,24 @@ class ScreenHome extends ConsumerWidget {
       ),
     );
 
+    Widget futureBuilderListPlaces = FutureBuilder(
+      future: _placesFuture,
+      builder: (context, snapshot) =>
+          snapshot.connectionState == ConnectionState.waiting
+              ? const Center(
+                  child: CircularProgressIndicator(),
+                )
+              : places.isEmpty
+                  ? emptyPlaces
+                  : listPlaces,
+    );
+
     Widget title = Text(
       "Saved Places",
       style: TextTheme.of(context).titleMedium,
     );
 
-    Widget switchContent = places.isEmpty ? emptyPlaces : listPlaces;
+    Widget switchContent = futureBuilderListPlaces;
 
     return Scaffold(
       floatingActionButton: floatingActionButton,

@@ -35,10 +35,13 @@ class Place {
 
   final String title;
   final String uuid;
-  final File image;
+  File image;
   final DateTime timestamp;
   final PlaceLocation location;
 
   final String? description;
-  // ImageMemmory image
+
+  set setImage(File newImage) {
+    image = newImage;
+  }
 }

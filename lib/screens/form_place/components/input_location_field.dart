@@ -226,16 +226,23 @@ class _InputLocationFieldState extends State<InputLocationField> {
     Widget buttonChooseLocation = ButtonLocation(
       title: "Use map",
       iconData: Icons.map_sharp,
-      onTap: () {},
+      onTap: () {
+        _selectLocation();
+      },
     );
     Widget inputFilled = InputContainer(
       widget: locationImage == null
           ? SizedBox.shrink()
-          : Image.network(
-              locationImage!,
-              fit: BoxFit.cover,
-              width: double.infinity,
-              height: double.infinity,
+          : GestureDetector(
+              onTap: () {
+                _selectLocation();
+              },
+              child: Image.network(
+                locationImage!,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
+              ),
             ),
     );
     Widget inputBlank = InputContainer(

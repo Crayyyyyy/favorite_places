@@ -1,4 +1,5 @@
 import 'package:favorite_places/objects/place.dart';
+import 'package:favorite_places/screens/google_maps/screen_google_maps.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
@@ -27,6 +28,17 @@ class ScreenPlace extends StatelessWidget {
     await loadApiKey();
 
     return 'https://maps.googleapis.com/maps/api/staticmap?center=$lat,$lng&zoom=18&size=600x600&maptype=roadmap&markers=color:red%7Clabel:A%7C$lat,$lng&key=$apiKey';
+  }
+
+  void _routeToGoogleMaps(BuildContext ctx) {
+    Navigator.of(ctx).push(
+      MaterialPageRoute(
+        builder: (c) => ScreenGoogleMaps(
+          isSelecting: false,
+          place: place,
+        ),
+      ),
+    );
   }
 
   @override
@@ -69,39 +81,44 @@ class ScreenPlace extends StatelessWidget {
       ),
     );
 
-    Widget bubbleLocation = Column(
-      children: [
-        FutureBuilder<String?>(
-          future: locationImage,
-          builder: (ctx, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return const CircleAvatar(
-                radius: 75,
-                child: CircularProgressIndicator(),
-              );
-            } else if (snapshot.hasError ||
-                !snapshot.hasData ||
-                snapshot.data!.isEmpty) {
-              return const CircleAvatar(
-                radius: 75,
-                child: Icon(Icons.error),
-              );
-            } else {
-              return CircleAvatar(
-                radius: 75,
-                backgroundImage: NetworkImage(snapshot.data!),
-              );
-            }
-          },
-        ),
-        const SizedBox(height: 20),
-        Text(
-          place.location.address,
-          textAlign: TextAlign.center,
-          style: Theme.of(context).textTheme.headlineSmall,
-        ),
-        const SizedBox(height: 70),
-      ],
+    Widget bubbleLocation = GestureDetector(
+      onTap: () {
+        _routeToGoogleMaps(context);
+      },
+      child: Column(
+        children: [
+          FutureBuilder<String?>(
+            future: locationImage,
+            builder: (ctx, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const CircleAvatar(
+                  radius: 75,
+                  child: CircularProgressIndicator(),
+                );
+              } else if (snapshot.hasError ||
+                  !snapshot.hasData ||
+                  snapshot.data!.isEmpty) {
+                return const CircleAvatar(
+                  radius: 75,
+                  child: Icon(Icons.error),
+                );
+              } else {
+                return CircleAvatar(
+                  radius: 75,
+                  backgroundImage: NetworkImage(snapshot.data!),
+                );
+              }
+            },
+          ),
+          const SizedBox(height: 20),
+          Text(
+            place.location.address,
+            textAlign: TextAlign.center,
+            style: Theme.of(context).textTheme.headlineSmall,
+          ),
+          const SizedBox(height: 70),
+        ],
+      ),
     );
 
     return Scaffold(

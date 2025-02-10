@@ -1,9 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:favorite_places/components/input_container.dart';
 import 'package:favorite_places/objects/place.dart';
+import 'package:favorite_places/screens/google_maps/screen_google_maps.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:http/http.dart' as http;
 
@@ -146,6 +149,73 @@ class _InputLocationFieldState extends State<InputLocationField> {
     }
   }
 
+  Future<void> _selectLocation() async {
+    LatLng? latLng = await Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (ctx) {
+          return ScreenGoogleMaps(
+            place: Place(
+              title: "title",
+              image: File("path"),
+              location: PlaceLocation(
+                  address: "",
+                  lat: 50.69958099201482,
+                  lng: -3.0941394779051037),
+            ),
+          );
+        },
+      ),
+    );
+
+    setState(() {
+      isLoading = true;
+    });
+
+    try {
+      // Handle scenario where location data were not obtained
+      if (latLng == null ||
+          latLng.longitude == null ||
+          latLng.latitude == null) {
+        showSnackBarMessage(
+            "No location was selected", Icon(Icons.error_outline_sharp));
+        return;
+      }
+
+      // <Request location data from Google Maps>
+      final url = Uri.parse(
+          'https://maps.googleapis.com/maps/api/geocode/json?latlng=${latLng.latitude},${latLng.longitude}&key=${key}');
+
+      final response = await http.get(url);
+      final jsonResponse = json.decode(response.body);
+      // </Request location data from Google Maps>
+
+      // Update state with location data
+      setState(() {
+        location = PlaceLocation(
+          address: jsonResponse["results"][0]["formatted_address"],
+          lat: latLng.latitude,
+          lng: latLng.longitude,
+        );
+      });
+    } catch (e) {
+      print(e);
+      location = null;
+      showSnackBarMessage(
+          "Something went wrong", Icon(Icons.error_outline_sharp));
+    } finally {
+      setState(() {
+        if (location != null) {
+          widget.onSelectLocation(location!);
+        } else {
+          location = null;
+          showSnackBarMessage(
+              "Something went wrong", Icon(Icons.error_outline_sharp));
+        }
+        isLoading = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Widget buttonCurrentLocation = ButtonLocation(
@@ -171,7 +241,9 @@ class _InputLocationFieldState extends State<InputLocationField> {
     Widget inputBlank = InputContainer(
       widget: TextButton.icon(
         style: ButtonStyle(),
-        onPressed: () {},
+        onPressed: () {
+          _selectLocation();
+        },
         label: Text("Choose location on Map"),
         icon: Icon(Icons.maps_home_work_sharp),
       ),
